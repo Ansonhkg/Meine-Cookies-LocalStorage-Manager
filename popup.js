@@ -5,6 +5,28 @@ document
     document.getElementById("fileInput").click()
   );
 document.getElementById("fileInput").addEventListener("change", importData);
+document
+  .getElementById("exportType")
+  .addEventListener("change", toggleExportPassword);
+document
+  .getElementById("importType")
+  .addEventListener("change", toggleImportPassword);
+
+function toggleExportPassword() {
+  const passwordField = document.getElementById("exportPassword");
+  passwordField.classList.toggle(
+    "hidden",
+    document.getElementById("exportType").value === "raw"
+  );
+}
+
+function toggleImportPassword() {
+  const passwordField = document.getElementById("importPassword");
+  passwordField.classList.toggle(
+    "hidden",
+    document.getElementById("importType").value === "raw"
+  );
+}
 
 function showStatus(message) {
   document.getElementById("status").textContent = message;
@@ -16,7 +38,24 @@ function showError(message) {
   setTimeout(() => (document.getElementById("error").textContent = ""), 5000);
 }
 
+function encryptData(data, password) {
+  return CryptoJS.AES.encrypt(JSON.stringify(data), password).toString();
+}
+
+function decryptData(encryptedData, password) {
+  const bytes = CryptoJS.AES.decrypt(encryptedData, password);
+  return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+}
+
 function exportData() {
+  const exportType = document.getElementById("exportType").value;
+  const password = document.getElementById("exportPassword").value;
+
+  if (exportType === "encrypted" && !password) {
+    showError("Please enter a password for encryption");
+    return;
+  }
+
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (chrome.runtime.lastError) {
       showError("Error querying tabs: " + chrome.runtime.lastError.message);
@@ -83,14 +122,23 @@ function exportData() {
 
             console.log("Exporting data:", data);
 
-            const blob = new Blob([JSON.stringify(data, null, 2)], {
-              type: "application/json",
-            });
+            let exportData, fileType, fileName;
+            if (exportType === "encrypted") {
+              exportData = encryptData(data, password);
+              fileType = "application/octet-stream";
+              fileName = `${domain}_encrypted_data.bin`;
+            } else {
+              exportData = JSON.stringify(data, null, 2);
+              fileType = "application/json";
+              fileName = `${domain}_data.json`;
+            }
+
+            const blob = new Blob([exportData], { type: fileType });
             const url = URL.createObjectURL(blob);
             chrome.downloads.download(
               {
                 url: url,
-                filename: `${domain}_data.json`,
+                filename: fileName,
               },
               function (downloadId) {
                 if (chrome.runtime.lastError) {
@@ -113,11 +161,26 @@ function exportData() {
 }
 
 function importData(event) {
+  const importType = document.getElementById("importType").value;
+  const password = document.getElementById("importPassword").value;
+
+  if (importType === "encrypted" && !password) {
+    showError("Please enter a password for decryption");
+    return;
+  }
+
   const file = event.target.files[0];
   const reader = new FileReader();
   reader.onload = function (e) {
     try {
-      const data = JSON.parse(e.target.result);
+      let data;
+      if (importType === "encrypted") {
+        const encryptedData = e.target.result;
+        data = decryptData(encryptedData, password);
+      } else {
+        data = JSON.parse(e.target.result);
+      }
+
       console.log("Importing data:", data);
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         if (chrome.runtime.lastError) {
@@ -193,8 +256,12 @@ function importData(event) {
         );
       });
     } catch (error) {
-      showError("Error parsing imported data: " + error.message);
+      showError("Error processing imported data: " + error.message);
     }
   };
   reader.readAsText(file);
 }
+
+// Initialize visibility of password fields
+toggleExportPassword();
+toggleImportPassword();

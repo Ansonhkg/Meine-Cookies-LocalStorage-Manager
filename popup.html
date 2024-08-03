@@ -1,32 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meine Cookies & LocalStorage Manager</title>
     <style>
       body {
+        font-family: Arial, sans-serif;
         width: 300px;
-        padding: 10px;
+        padding: 20px;
+        background-color: #f0f0f0;
+        margin: 0;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      .header img {
+        width: 32px;
+        height: 32px;
+        margin-right: 10px;
+      }
+      h2 {
+        color: #333;
+        margin: 0;
+        font-size: 18px;
+      }
+      .section {
+        background-color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .section-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #444;
+      }
+      select,
+      input,
+      button {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
       }
       button {
-        margin: 5px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #45a049;
       }
       #status {
-        margin-top: 10px;
         color: green;
+        text-align: center;
+        margin-top: 10px;
       }
       #error {
-        margin-top: 10px;
         color: red;
+        text-align: center;
+        margin-top: 10px;
+      }
+      .hidden {
+        display: none;
       }
     </style>
   </head>
   <body>
-    <h2>Meine Cookies & LocalStorage Manager</h2>
-    <button id="exportBtn">Export Data</button>
-    <button id="importBtn">Import Data</button>
-    <input type="file" id="fileInput" style="display: none" />
+    <div class="header">
+      <img src="./biscuit_icon_128.png" alt="Biscuit Icon" />
+      <h2>Meine Cookies & LocalStorage Manager</h2>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Export Data</div>
+      <select id="exportType">
+        <option value="raw">Export Raw Data</option>
+        <option value="encrypted">Export Encrypted Data</option>
+      </select>
+      <input
+        type="password"
+        id="exportPassword"
+        placeholder="Password for export"
+        class="hidden"
+      />
+      <button id="exportBtn">Export Data</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Import Data</div>
+      <select id="importType">
+        <option value="raw">Import Raw Data</option>
+        <option value="encrypted">Import Encrypted Data</option>
+      </select>
+      <input
+        type="password"
+        id="importPassword"
+        placeholder="Password for import"
+        class="hidden"
+      />
+      <button id="importBtn">Choose File & Import</button>
+      <input type="file" id="fileInput" style="display: none" />
+    </div>
+
     <div id="status"></div>
     <div id="error"></div>
+
+    <script src="./crypto-js.min.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>
