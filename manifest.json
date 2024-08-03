@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Meine Cookies & LocalStorage Manager",
+  "version": "1.5",
+  "description": "No bulls**t, no ads, nada - just import and export encrypted cookies and local storage data",
+  "permissions": [
+    "cookies",
+    "tabs",
+    "storage",
+    "downloads",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
