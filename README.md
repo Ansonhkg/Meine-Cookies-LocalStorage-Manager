@@ -10,6 +10,8 @@ Meine Cookies is a Chrome extension designed to help users export and import all
 
 - **Export Data**: Export all cookies and local storage data from the current website.
 - **Import Data**: Import cookies and local storage data back into the website.
+- **Encryption**: Optionally encrypt data during export and decrypt during import using a password.
+
 
 ## Installation 🛠️
 
