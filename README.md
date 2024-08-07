@@ -1,5 +1,7 @@
 # Meine Cookies Chrome Extension 🍪
 
+Download here: https://chromewebstore.google.com/detail/afgbbmochhoafafcjpbalckedanipjnc
+
 ![](https://i.ibb.co/MgZkJ8Z/Xnapper-2024-08-03-16-28-28.png)
 
 No bulls\*\*t 💩, no ads, nada - just import and export cookies and local storage data.
